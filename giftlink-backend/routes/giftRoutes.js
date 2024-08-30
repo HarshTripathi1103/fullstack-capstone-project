@@ -1,59 +1,31 @@
-router.get('/', async (req, res) => {
-    try {
-        // Task 1: Connect to MongoDB and store connection to db constant
-        // const db = {{insert code here}}
+const connectToDatabase = require("../models/db")
 
-        // Task 2: use the collection() method to retrieve the gift collection
-        // {{insert code here}}
+router.get('/', async(req,res) => {
+    try{
+    const db = await connectToDatabase();
+    const collection = db.collection("gifts");
+    const gifts = await collection.find({}).toArray();
+    res.json(gifts);
+} catch {
+    console.log('unable to fetch gifts', e);
+    res.status(500).send('unable to fetch gifts')
+}
+})
 
-        // Task 3: Fetch all gifts using the collection.find method. Chain with toArray method to convert to JSON array
-        // const gifts = {{insert code here}}
-
-        // Task 4: return the gifts using the res.json method
-        res.json(/* {{insert code here}} */);
-    } catch (e) {
-        console.error('Error fetching gifts:', e);
-        res.status(500).send('Error fetching gifts');
-    }
-});
-
-router.get('/:id', async (req, res) => {
-    try {
-        // Task 1: Connect to MongoDB and store connection to db constant
-        // const db = {{insert code here}}
-
-        // Task 2: use the collection() method to retrieve the gift collection
-        // {{insert code here}}
-
-        const id = req.params.id;
-
-        // Task 3: Find a specific gift by ID using the collection.fineOne method and store in constant called gift
-        // {{insert code here}}
-
-        if (!gift) {
-            return res.status(404).send('Gift not found');
-        }
-
-        res.json(gift);
-    } catch (e) {
-        console.error('Error fetching gift:', e);
-        res.status(500).send('Error fetching gift');
-    }
-});
-
-
-
-// Add a new gift
-router.post('/', async (req, res, next) => {
-    try {
+router.get('/api/gifts/:id' , async(req,res) => {
+    try{
         const db = await connectToDatabase();
         const collection = db.collection("gifts");
-        const gift = await collection.insertOne(req.body);
+        const id = req.params.id;
+        const gifts = await collection.find({id : id}).toArray();
 
-        res.status(201).json(gift.ops[0]);
-    } catch (e) {
-        next(e);
+        if(!gifts){
+            return res.status(400).send(`cannot find gift with id:${id}`);
+        }
+        res.json(gifts)
+
+    } catch(e) {
+       console.log("unable to find gift",e);
+       res.status(500).send('Error fetching gift');
     }
-});
-
-module.exports = router;
+})
