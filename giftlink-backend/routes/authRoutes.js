@@ -1,6 +1,7 @@
 const express = require('express');
 const bcryptjs = require('bcrypt');
 const jwt = require('jasonwebtoken');
+const {body,valiadationResult, validationResult} = require('express-validator');
 const connectToDatabase = require('../models/db');
 const router = express.Router();
 const dotenv = require('dotenv');
@@ -87,3 +88,54 @@ router.post('/login' ,async (req,res) => {
         return res.status(500).send('Internal server error', details: e.message);
     }
 })
+
+router.put('/update',async(req,res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        logger.error('Validation error', errors.array());
+        return res.status(400).json({errors: errors.array()});
+    }
+    try {
+        const email =  req.headers.email;
+
+        if (!email) {
+            logger.error('Email not found in headers');
+            return res.status(400).json({error: 'Email not found in headers'});
+        }
+
+        const db = await connectToDatabase();
+        const collection = db.collection('users');
+
+        const existingUser = await collection.findOne({email});
+
+        if (!existingUser) {
+            logger.error('User not found');
+            return res.status(404).json({error: 'User not found'});
+        }
+
+        existingUser.firstName = req.body.firstName;
+        existingUser.updatedAt = new Date();
+
+        const updatedUser = await collection.findOneAndUpdate(
+            {email},
+            {$set: existingUser},
+            {returnDocument: 'after'}
+        );
+
+        const payload = {
+            user : {
+                id: updatedUser._id.toString(),
+            }
+        }
+
+        const authtoken = jwt.sign(payload,JWT_SECRET);
+        logger.info('User updated successfully');
+
+        res.json({authtoken})
+
+    } catch (error) {
+        logger.error(error);
+        return res.status(500).send('Internal server error');
+    }
+})
+module.exports = router;

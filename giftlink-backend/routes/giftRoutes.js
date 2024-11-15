@@ -1,5 +1,6 @@
 const connectToDatabase = require("../models/db")
-
+const express = require('express');
+const router = express.Router();
 router.get('/', async(req,res) => {
     try{
     const db = await connectToDatabase();
@@ -29,3 +30,4 @@ router.get('/api/gifts/:id' , async(req,res) => {
        res.status(500).send('Error fetching gift');
     }
 })
+module.exports = router;
