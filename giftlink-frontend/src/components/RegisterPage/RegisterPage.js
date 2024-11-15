@@ -10,6 +10,7 @@ function RegisterPage() {
 
     const handleRegister = async () => {
         console.log("Register invoked")
+        
     }
 
 return (

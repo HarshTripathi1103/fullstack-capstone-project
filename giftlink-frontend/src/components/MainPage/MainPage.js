@@ -42,6 +42,7 @@ function MainPage() {
 
     const getConditionClass = (condition) => {
         return condition === "New" ? "list-group-item-success" : "list-group-item-warning";
+        
     };
 
     return (
