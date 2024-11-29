@@ -1,5 +1,5 @@
-/*jshint esversion: 8 */
-const connectToDatabase = require("../models/db")
+/*jshint esversion: 10 */
+const connectToDatabase = require("../models/db");
 
 router.get('/', async(req,res) => {
     try{
@@ -11,7 +11,7 @@ router.get('/', async(req,res) => {
     console.log('unable to fetch gifts', e);
     res.status(500).send('unable to fetch gifts');
 }
-})
+});
 
 router.get('/api/gifts/:id' , async(req,res) => {
     try{
@@ -29,4 +29,4 @@ router.get('/api/gifts/:id' , async(req,res) => {
        console.log("unable to find gift",e);
        res.status(500).send('Error fetching gift');
     }
-})
+});
