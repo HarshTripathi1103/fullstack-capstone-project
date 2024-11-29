@@ -20,7 +20,7 @@ router.get('/api/gifts/:id' , async(req,res) => {
         const gifts = await collection.find({id : id}).toArray();
 
         if(!gifts){
-            return res.status(400).send(`cannot find gift with id:${id}`);
+            return res.status(404).send(`cannot find gift with id:${id}`);
         }
         res.json(gifts)
 
