@@ -9,7 +9,7 @@ router.get('/', async(req,res) => {
     res.json(gifts);
 } catch {
     console.log('unable to fetch gifts', e);
-    res.status(500).send('unable to fetch gifts')
+    res.status(500).send('unable to fetch gifts');
 }
 })
 
@@ -23,7 +23,7 @@ router.get('/api/gifts/:id' , async(req,res) => {
         if(!gifts){
             return res.status(404).send(`cannot find gift with id:${id}`);
         }
-        res.json(gifts)
+        res.json(gifts);
 
     } catch(e) {
        console.log("unable to find gift",e);
